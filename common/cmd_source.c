@@ -29,11 +29,11 @@
 #include <linux/ctype.h>
 
 static
-int check_odroid_script(ulong addr, char *product)
+int check_odroid_script(ulong addr)
 {
 	char *buf;
 	char magic[32];
-	int size = snprintf(magic, sizeof(magic), "%s-uboot-config\n", product);
+	int size = snprintf(magic, sizeof(magic), "rocknix-uboot-config\n");
 
 	buf = map_sysmem(addr, 0);
 	if (strncasecmp(magic, buf, size))
@@ -154,7 +154,7 @@ source (ulong addr, const char *fit_uname)
 #endif
 	default:
 #if defined(CONFIG_ODROID_COMMON)
-		size = check_odroid_script(addr, CONFIG_DEVICE_PRODUCT);
+		size = check_odroid_script(addr);
 		if (size > 0) {
 			data = (u32*)(addr + size);
 			len = simple_strtoul(getenv("filesize"), NULL, 16) - size;
