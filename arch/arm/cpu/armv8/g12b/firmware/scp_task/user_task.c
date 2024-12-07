@@ -103,7 +103,7 @@ void secure_task(void)
 						(void *)response,  state);
 			} else if (command == COMMAND_SUSPEND_ENTER) {
 				state = *(pcommand+1);
-				enter_suspend(state);
+				//enter_suspend(state);
 				*pcommand = 0;
 				*response = RESPONSE_SUSPEND_LEAVE;
 				presume = (struct resume_param *)(response+1);
