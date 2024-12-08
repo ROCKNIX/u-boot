@@ -145,9 +145,14 @@
 			"run boot_${type}; "		\
 		"done\0"
 
+#define BOOT_TARGET_DEVICES(func) \
+        func(MMC, mmc, 1) \
+        func(MMC, mmc, 0)
+
 /* args/envs */
 #define CONFIG_SYS_MAXARGS  64
 #define CONFIG_EXTRA_ENV_SETTINGS \
+        BOOTENV \
         ENV_PXE_DEFAULT \
         ENV_MMC_DEFAULT \
         ENV_MMC_LIST_DEFAULT \
@@ -169,16 +174,18 @@
         "display_layer=osd0\0" \
         "display_color_fg=0xffffff\0" \
         "display_color_bg=0\0" \
-        "dtb_mem_addr=0x1000000\0" \
+        "dtb_mem_addr=0x10000000\0" \
         "cramfsaddr=0x20000000\0" \
         "fb_addr=0x3d800000\0" \
         "fb_width=480\0" \
         "fb_height=854\0" \
         "fdt_high=0x20000000\0"\
-        "fdt_addr_r=0x1000000\0" \
+        "fdt_addr_r=0x10000000\0" \
+        "fdtaddr=0x10000000\0" \
         "kernel_addr_r=0x1080000\0" \
         "ramdisk_addr_r=0x3080000\0" \
         "preloadaddr=0x4000000\0"\
+        "scriptaddr=0x0800000\0"\
         "lcd_clk_path=1\0" \
         "lcd_debug_print=0\0" \
         "cvbs_drv=0\0"\
@@ -250,11 +257,6 @@
 	"bios_offset_initrd=0x004e0000\0" \
 	"bios_sizeof_initrd=0x320000\0"
 
-#define CONFIG_PREBOOT  \
-            "run switch_bootmode;"
-
-#define CONFIG_BOOTCOMMAND			"run boot_default"
-
 #define CONFIG_BOOTAREA_SIZE			(1 * SZ_1M)
 #define CONFIG_MBR_SIZE				512
 #define CONFIG_ENV_SIZE				(64 * SZ_1K)
@@ -289,7 +291,7 @@
 #define CONFIG_DDR_PLL_BYPASS			0 //0:disable, 1:enable. ddr pll bypass function
 
 /* storage: emmc/nand/sd */
-#define CONFIG_ENV_IS_IN_MMC			1
+#define		CONFIG_ENV_IS_NOWHERE		1
 #define 	CONFIG_ENV_OVERWRITE
 #define 	CONFIG_CMD_SAVEENV
 /* fixme, need fix*/
@@ -515,5 +517,7 @@
 #define CONFIG_BOARD_EARLY_INIT_F		1
 
 #define CONFIG_ZERO_BOOTDELAY_CHECK	/* check for keypress on bootdelay==0 */
+
+#include <config_distro_bootcmd.h>
 
 #endif
