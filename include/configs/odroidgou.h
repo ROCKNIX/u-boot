@@ -182,6 +182,7 @@
         "fdt_high=0x20000000\0"\
         "fdt_addr_r=0x10000000\0" \
         "fdtaddr=0x10000000\0" \
+        "fdtoverlay_addr_r=0x10100000\0" \
         "kernel_addr_r=0x1080000\0" \
         "ramdisk_addr_r=0x3080000\0" \
         "preloadaddr=0x4000000\0"\
@@ -271,6 +272,7 @@
 
 #define CONFIG_FIT				1
 #define CONFIG_OF_LIBFDT			1
+#define CONFIG_OF_LIBFDT_OVERLAY		1
 #define CONFIG_ANDROID_BOOT_IMAGE		1
 #define CONFIG_ANDROID_IMG			1
 #define CONFIG_SYS_BOOTM_LEN			(64 << 20) /* Increase max gunzip size */
