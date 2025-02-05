@@ -340,7 +340,7 @@ static void configure_env(void)
 	}
 
 	/* Now build the full path name */
-	snprintf(dt_path, sizeof(dt_path), "qcom/%s-%s.dtb",
+	snprintf(dt_path, sizeof(dt_path), "%s-%s.dtb",
 		 env_get("soc"), env_get("board"));
 	env_set("fdtfile", dt_path);
 
