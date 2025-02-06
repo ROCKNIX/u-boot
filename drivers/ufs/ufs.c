@@ -117,12 +117,14 @@ static void ufshcd_print_pwr_info(struct ufs_hba *hba)
 		"INVALID MODE",
 	};
 
+#if 0
 	dev_err(hba->dev, "[RX, TX]: gear=[%d, %d], lane[%d, %d], pwr[%s, %s], rate = %d\n",
 		hba->pwr_info.gear_rx, hba->pwr_info.gear_tx,
 		hba->pwr_info.lane_rx, hba->pwr_info.lane_tx,
 		names[hba->pwr_info.pwr_rx],
 		names[hba->pwr_info.pwr_tx],
 		hba->pwr_info.hs_rate);
+#endif
 }
 
 static void ufshcd_device_reset(struct ufs_hba *hba)

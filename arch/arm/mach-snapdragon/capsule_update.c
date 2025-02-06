@@ -192,7 +192,9 @@ void qcom_configure_capsule_updates(void)
 	}
 
 	if (partnum < 0) {
+#if 0
 		log_err("Failed to find boot partition\n");
+#endif
 		return;
 	}
 

@@ -210,7 +210,9 @@ static int ufs_get_max_pwr_mode(struct ufs_hba *hba,
 			       UIC_ARG_MIB(PA_TXHSADAPTTYPE),
 			       PA_INITIAL_ADAPT);
 
+#if 0
 	dev_info(hba->dev, "Max HS Gear: %d\n", max_pwr_info->info.gear_rx);
+#endif
 
 	return 0;
 }
@@ -571,10 +573,12 @@ static int ufs_qcom_init(struct ufs_hba *hba)
 	ufs_qcom_get_controller_revision(hba, &priv->hw_ver.major,
 					 &priv->hw_ver.minor,
 					 &priv->hw_ver.step);
+#if 0
 	dev_info(hba->dev, "Qcom UFS HC version: %d.%d.%d\n",
 		 priv->hw_ver.major,
 		 priv->hw_ver.minor,
 		 priv->hw_ver.step);
+#endif
 
 	err = ufs_qcom_init_clks(priv);
 	if (err) {
@@ -636,7 +640,9 @@ static int ufs_qcom_probe(struct udevice *dev)
 
 	ret = gpio_request_by_name(dev, "reset-gpios", 0, &priv->reset, GPIOD_IS_OUT);
 	if (ret) {
+#if 0
 		dev_err(dev, "Warning: cannot get reset GPIO\n");
+#endif
 	}
 
 	ret = ufshcd_probe(dev, &ufs_qcom_hba_ops);
