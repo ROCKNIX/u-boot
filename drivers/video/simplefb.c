@@ -9,6 +9,7 @@
 #include <log.h>
 #include <video.h>
 #include <asm/global_data.h>
+#include "../../arch/arm/mach-snapdragon/qcom-priv.h"
 
 static int simple_video_probe(struct udevice *dev)
 {
@@ -51,6 +52,12 @@ static int simple_video_probe(struct udevice *dev)
 	uc_priv->rot = rot;
 	uc_priv->xsize = width;
 	uc_priv->ysize = height;
+
+	if (is_retroid_pocketmini()) {
+		uc_priv->xsize = 1280;
+		uc_priv->ysize = 960;
+		uc_priv->line_length = 960 * 4;
+	}
 
 	format = ofnode_read_string(node, "format");
 	debug("%s: %dx%d@%s\n", __func__, uc_priv->xsize, uc_priv->ysize, format);

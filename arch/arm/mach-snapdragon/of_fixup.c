@@ -28,6 +28,7 @@
 #include <time.h>
 #include <efi_loader.h>
 #include <efi_api.h>
+#include "qcom-priv.h"
 
 static u64 get_ram_size_bytes(void)
 {
@@ -42,7 +43,7 @@ static u64 get_ram_size_bytes(void)
 	return total_size;
 }
 
-static bool is_retroid_pocketmini(void)
+bool is_retroid_pocketmini(void)
 {
 	u64 ram_size = get_ram_size_bytes();
 	return (ram_size < 7ULL * 1024 * 1024 * 1024); // Less than 7GB threshold
