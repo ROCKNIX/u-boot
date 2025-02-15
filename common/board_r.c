@@ -485,7 +485,9 @@ static int initr_boot_led_on(void)
 #if defined(CONFIG_CMD_NET)
 static int initr_net(void)
 {
+#if 0
 	puts("Net:   ");
+#endif
 	eth_initialize();
 #if defined(CONFIG_RESET_PHY_R)
 	debug("Reset Ethernet PHY\n");

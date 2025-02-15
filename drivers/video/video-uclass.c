@@ -514,6 +514,7 @@ int video_sync_copy_all(struct udevice *dev)
 
 #endif
 
+#if 0
 #define SPLASH_DECL(_name) \
 	extern u8 __splash_ ## _name ## _begin[]; \
 	extern u8 __splash_ ## _name ## _end[]
@@ -536,6 +537,7 @@ static int show_splash(struct udevice *dev)
 
 	return 0;
 }
+#endif
 
 int video_default_font_height(struct udevice *dev)
 {
@@ -639,6 +641,7 @@ static int video_post_probe(struct udevice *dev)
 		return ret;
 	}
 
+#if 0
 	if (CONFIG_IS_ENABLED(VIDEO_LOGO) &&
 	    !CONFIG_IS_ENABLED(SPLASH_SCREEN) && !plat->hide_logo) {
 		ret = show_splash(dev);
@@ -647,6 +650,7 @@ static int video_post_probe(struct udevice *dev)
 			return ret;
 		}
 	}
+#endif
 
 	/* register cyclic as soon as the first video device is probed */
 	if (CONFIG_IS_ENABLED(CYCLIC) && (gd->flags && GD_FLG_RELOC) &&

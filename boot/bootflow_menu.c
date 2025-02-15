@@ -62,11 +62,13 @@ int bootflow_menu_new(struct expo **expp)
 			     "U-Boot - Boot Menu", NULL);
 	ret |= scene_menu_set_title(scn, OBJ_MENU, OBJ_PROMPT);
 
+#if 0
 	logo = video_get_u_boot_logo();
 	if (logo) {
 		ret |= scene_img(scn, "ulogo", OBJ_U_BOOT_LOGO, logo, NULL);
 		ret |= scene_obj_set_pos(scn, OBJ_U_BOOT_LOGO, -4, 4);
 	}
+#endif
 
 	ret |= scene_txt_str(scn, "cur_item", OBJ_POINTER, STR_POINTER, ">",
 			     NULL);
