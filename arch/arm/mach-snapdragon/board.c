@@ -37,6 +37,53 @@
 
 #include "qcom-priv.h"
 
+static u64 get_ram_size_bytes(void)
+{
+	struct bd_info *bd = gd->bd;
+	u64 total_size = 0;
+	int i;
+
+	for (i = 0; i < CONFIG_NR_DRAM_BANKS && bd->bi_dram[i].size; i++) {
+		total_size += bd->bi_dram[i].size;
+	}
+
+	return total_size;
+}
+
+bool is_retroid_pocketmini(void)
+{
+	u64 ram_size = get_ram_size_bytes();
+	return (ram_size < 7ULL * 1024 * 1024 * 1024); // Less than 7GB threshold
+}
+
+#include <u-boot/md5.h>
+bool is_retroid_pocketmini_v2(void) {
+  unsigned int height = 1080;
+  unsigned int width = 1240;
+  const uint8_t *mem_ptr = (const uint8_t *)0x9C000000;
+  unsigned int framebuffer_bytes = 4 * height * width;
+  const unsigned char expected_md5[16] = {
+    0xB6, 0xBC, 0x26, 0xCB, 0x1A, 0xB3, 0x9B, 0x10,
+    0xEC, 0xF4, 0xF4, 0x61, 0x73, 0xA1, 0x78, 0xAD
+  };
+  unsigned char calculated_md5[16];
+  md5_wd(mem_ptr, framebuffer_bytes, calculated_md5, MD5_DEF_CHUNK_SZ);
+  return (memcmp(calculated_md5, expected_md5, 16) == 0);
+}
+bool is_retroid_pocketflip2(void) {
+  unsigned int height = 1080;
+  unsigned int width = 1920;
+  const uint8_t *mem_ptr = (const uint8_t *)0x9C000000;
+  unsigned int framebuffer_bytes = 4 * height * width;
+  const unsigned char expected_md5[16] = {
+    0xAE, 0x77, 0xDA, 0x1C, 0xBB, 0xD7, 0xFD, 0xB7,
+    0xF6, 0xA2, 0xD3, 0x7C, 0x61, 0x1D, 0x69, 0x9C
+  };
+  unsigned char calculated_md5[16];
+  md5_wd(mem_ptr, framebuffer_bytes, calculated_md5, MD5_DEF_CHUNK_SZ);
+  return (memcmp(calculated_md5, expected_md5, 16) == 0);
+}
+
 DECLARE_GLOBAL_DATA_PTR;
 
 static struct mm_region rbx_mem_map[CONFIG_NR_DRAM_BANKS + 2] = { { 0 } };
@@ -366,6 +413,19 @@ int board_late_init(void)
 	u32 status = 0;
 	phys_addr_t addr;
 	struct fdt_header *fdt_blob = (struct fdt_header *)gd->fdt_blob;
+
+  if (is_retroid_pocketmini()) {
+    if (is_retroid_pocketmini_v2()) {
+      env_set("dtb_name", "sm8250-retroidpocket-rpminiv2.dtb");
+    } else {
+      env_set("dtb_name", "sm8250-retroidpocket-rpmini.dtb");
+    }
+  } else if (is_retroid_pocketflip2()) {
+    env_set("dtb_name", "sm8250-retroidpocket-flip2.dtb");
+  } else {
+    env_set("dtb_name", "sm8250-retroidpocket-rp5.dtb");
+  }
+
 
 	/* We need to be fairly conservative here as we support boards with just 1G of TOTAL RAM */
 	addr = addr_alloc(SZ_128M);

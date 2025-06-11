@@ -30,114 +30,6 @@
 #include <efi_api.h>
 #include "qcom-priv.h"
 
-static u64 get_ram_size_bytes(void)
-{
-	struct bd_info *bd = gd->bd;
-	u64 total_size = 0;
-	int i;
-
-	for (i = 0; i < CONFIG_NR_DRAM_BANKS && bd->bi_dram[i].size; i++) {
-		total_size += bd->bi_dram[i].size;
-	}
-
-	return total_size;
-}
-
-bool is_retroid_pocketmini(void)
-{
-	u64 ram_size = get_ram_size_bytes();
-	return (ram_size < 7ULL * 1024 * 1024 * 1024); // Less than 7GB threshold
-}
-
-static int fixup_retroid_fdt(void *blob)
-{
-	int nodeoff;
-	int ret;
-	efi_status_t efi_ret;
-
-	/* Ensure FDT has enough space for modifications */
-	ret = fdt_increase_size(blob, 512); /* Add 512 bytes of padding */
-	if (ret < 0) {
-		printf("Failed to increase FDT size\n");
-		return -1;
-	}
-
-	/* Get root node first */
-	nodeoff = fdt_path_offset(blob, "/");
-	if (nodeoff < 0) {
-		printf("ERROR: Cannot find root node\n");
-		return -1;
-	}
-
-	/* Set rocknix,u-boot property */
-	ret = fdt_setprop_empty(blob, nodeoff, "rocknix,u-boot");
-	if (ret < 0) {
-		printf("ERROR: Failed to set rocknix,u-boot property\n");
-		return -1;
-	}
-
-	if (is_retroid_pocketmini()) {
-		/* Set model and compatible properties */
-		ret = fdt_setprop_string(blob, nodeoff, "model", "Retroid Pocket Mini");
-		if (ret < 0) {
-			printf("ERROR: Failed to set model property\n");
-			return -1;
-		}
-
-		const char compatible[] = "retroidpocket,rpmini\0qcom,sm8250";
-		ret = fdt_setprop(blob, nodeoff, "compatible", compatible, sizeof(compatible));
-		if (ret < 0) {
-			printf("ERROR: Failed to set compatible property\n");
-			return -1;
-		}
-
-		/* Framebuffer modifications */
-		nodeoff = fdt_path_offset(blob, "/chosen/framebuffer@9c000000");
-		if (nodeoff >= 0) {
-			ret = fdt_setprop_u32(blob, nodeoff, "width", 0x3c0);
-			ret |= fdt_setprop_u32(blob, nodeoff, "height", 0x500);
-			ret |= fdt_setprop_u32(blob, nodeoff, "stride", 0xf00);
-			if (ret < 0) {
-				printf("ERROR: Failed to modify framebuffer properties\n");
-				return -1;
-			}
-		}
-
-		/* Touchscreen modifications */
-		nodeoff = fdt_path_offset(blob, "/soc@0/geniqup@ac0000/i2c@a94000/touchscreen@38");
-		if (nodeoff >= 0) {
-			ret = fdt_setprop_u32(blob, nodeoff, "touchscreen-size-x", 0x3c0);
-			ret |= fdt_setprop_u32(blob, nodeoff, "touchscreen-size-y", 0x500);
-			ret |= fdt_delprop(blob, nodeoff, "touchscreen-inverted-x");
-			ret |= fdt_delprop(blob, nodeoff, "touchscreen-inverted-y");
-			if (ret < 0) {
-				printf("ERROR: Failed to modify touchscreen properties\n");
-				return -1;
-			}
-		}
-
-		/* Panel modifications */
-		nodeoff = fdt_path_offset(blob, "/soc@0/display-subsystem@ae00000/dsi@ae94000/panel@0");
-		if (nodeoff >= 0) {
-			ret = fdt_setprop_string(blob, nodeoff, "compatible", "ch13726a,rpmini");
-			ret |= fdt_setprop_u32(blob, nodeoff, "rotation", 0x5a);
-			if (ret < 0) {
-				printf("ERROR: Failed to modify panel properties\n");
-				return -1;
-			}
-		}
-
-		/* After all modifications are done, install the modified DTB in the EFI configuration table */
-		efi_ret = efi_install_configuration_table(&efi_guid_fdt, blob);
-		if (efi_ret != EFI_SUCCESS) {
-			printf("ERROR: Failed to install FDT in configuration table: %ld\n", efi_ret);
-			return efi_ret;
-		}
-	}
-
-	return 0;
-}
-
 /* U-Boot only supports USB high-speed mode on Qualcomm platforms with DWC3
  * USB controllers. Rather than requiring source level DT changes, we fix up
  * DT here. This improves compatibility with upstream DT and simplifies the
@@ -271,11 +163,6 @@ int ft_board_setup(void *blob, struct bd_info __maybe_unused *bd)
 {
 	struct fdt_header *fdt = blob;
 	int node;
-	int ret = 0;
-
-	ret = fixup_retroid_fdt(blob);
-	if (ret < 0)
-		printf("WARNING: Failed to modify device tree: %d\n", ret);
 
 	/* On RB2 we need to fix-up the dr_mode */
 	if (!fdt_node_check_compatible(fdt, 0, "qcom,qrb4210-rb2")) {

@@ -48,16 +48,22 @@ static int simple_video_probe(struct udevice *dev)
 		log_err("%s: invalid width or height: %d\n", __func__, ret);
 		return ret ?: -EINVAL;
 	}
-	ofnode_read_u32(node, "rot", &rot);
-	uc_priv->rot = rot;
-	uc_priv->xsize = width;
-	uc_priv->ysize = height;
-
 	if (is_retroid_pocketmini()) {
-		uc_priv->xsize = 1280;
-		uc_priv->ysize = 960;
-		uc_priv->line_length = 960 * 4;
+		if (is_retroid_pocketmini_v2()) {
+			uc_priv->xsize = 1080;
+			uc_priv->ysize = 1240;
+			uc_priv->line_length = 1080 * 4;
+		} else {
+			uc_priv->xsize = 960;
+			uc_priv->ysize = 1280;
+			uc_priv->line_length = 960 * 4;
+		}
+	} else {
+		uc_priv->xsize = width;
+		uc_priv->ysize = height;
 	}
+  ofnode_read_u32(node, "rot", &rot);
+  uc_priv->rot = rot;
 
 	format = ofnode_read_string(node, "format");
 	debug("%s: %dx%d@%s\n", __func__, uc_priv->xsize, uc_priv->ysize, format);
