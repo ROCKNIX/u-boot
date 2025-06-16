@@ -601,7 +601,9 @@ int blk_get_device_part_str(const char *ifname, const char *dev_part_str,
 	if (part != PART_AUTO) {
 		ret = part_get_info(*desc, part, info);
 		if (ret) {
+#if 0
 			printf("** Invalid partition %d **\n", part);
+#endif
 			goto cleanup;
 		}
 	} else {
@@ -772,8 +774,10 @@ int part_get_info_by_dev_and_name_or_num(const char *dev_iface,
 	ret = blk_get_device_part_str(dev_iface, dev_part_str, desc, part_info,
 				      allow_whole_dev);
 	if (ret < 0)
+#if 0
 		printf("Couldn't find partition %s %s\n",
 		       dev_iface, dev_part_str);
+#endif
 	return ret;
 }
 

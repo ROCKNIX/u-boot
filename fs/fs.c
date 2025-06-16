@@ -795,6 +795,7 @@ int do_load(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[],
 			(argc > 4) ? argv[4] : "", map_sysmem(addr, 0),
 			len_read);
 
+#if 0
 	printf("%llu bytes read in %lu ms", len_read, time);
 	if (time > 0) {
 		puts(" (");
@@ -802,6 +803,7 @@ int do_load(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[],
 		puts(")");
 	}
 	puts("\n");
+#endif
 
 	env_set_hex("fileaddr", addr);
 	env_set_hex("filesize", len_read);
