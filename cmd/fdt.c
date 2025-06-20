@@ -46,7 +46,9 @@ static void set_working_fdt_addr_quiet(ulong addr)
 
 void set_working_fdt_addr(ulong addr)
 {
+#if 0
 	printf("Working FDT set to %lx\n", addr);
+#endif
 	set_working_fdt_addr_quiet(addr);
 }
 

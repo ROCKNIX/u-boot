@@ -67,8 +67,10 @@ static void announce_and_cleanup(int fake)
 
 	board_quiesce_devices();
 
+#if 0
 	printf("\nStarting kernel ...%s\n\n", fake ?
 		"(fake run for tracing)" : "");
+#endif
 	/*
 	 * Call remove function of all devices with a removal flag set.
 	 * This may be useful for last-stage operations, like cancelling
