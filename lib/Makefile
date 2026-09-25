@@ -7,7 +7,7 @@
 
 ifndef CONFIG_SPL_BUILD
 
-obj-$(CONFIG_RSA) += rsa/
+obj-y += rsa/
 obj-$(CONFIG_LZMA) += lzma/
 obj-$(CONFIG_LZO) += lzo/
 obj-$(CONFIG_ZLIB) += zlib/

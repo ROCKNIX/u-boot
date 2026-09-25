@@ -210,7 +210,7 @@ static int rsa_sign_with_key(RSA *rsa, struct checksum_algo *checksum_algo,
 		ret = rsa_err("Could not obtain signature");
 		goto err_sign;
 	}
-	EVP_MD_CTX_cleanup(context);
+	EVP_MD_CTX_reset(context);
 	EVP_MD_CTX_destroy(context);
 	EVP_PKEY_free(key);
 
@@ -276,17 +276,20 @@ static int rsa_get_exponent(RSA *key, uint64_t *e)
 	if (!e)
 		goto cleanup;
 
-	if (BN_num_bits(key->e) > 64)
+	const BIGNUM *key_n, *key_e, *key_d;
+	RSA_get0_key(key, &key_n, &key_e, &key_d);
+
+	if (BN_num_bits(key_e) > 64)
 		goto cleanup;
 
-	*e = BN_get_word(key->e);
+	*e = BN_get_word(key_e);
 
-	if (BN_num_bits(key->e) < 33) {
+	if (BN_num_bits(key_e) < 33) {
 		ret = 0;
 		goto cleanup;
 	}
 
-	bn_te = BN_dup(key->e);
+	bn_te = BN_dup(key_e);
 	if (!bn_te)
 		goto cleanup;
 
@@ -337,7 +340,10 @@ int rsa_get_params(RSA *key, uint64_t *exponent, uint32_t *n0_invp,
 	if (0 != rsa_get_exponent(key, exponent))
 		ret = -1;
 
-	if (!BN_copy(n, key->n) || !BN_set_word(big1, 1L) ||
+	const BIGNUM *key_n, *key_e, *key_d;
+	RSA_get0_key(key, &key_n, &key_e, &key_d);
+
+	if (!BN_copy(n, key_n) || !BN_set_word(big1, 1L) ||
 	    !BN_set_word(big2, 2L) || !BN_set_word(big32, 32L))
 		ret = -1;
 

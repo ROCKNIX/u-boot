@@ -45,6 +45,10 @@
 #endif
 #include <cli_hush.h>
 
+#ifndef IMAGE_FORMAT_LEGACY
+#define IMAGE_FORMAT_LEGACY 0x01
+#endif
+
 int
 autoscript (ulong addr, const char *fit_uname)
 {
