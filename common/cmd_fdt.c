@@ -644,6 +644,8 @@ static int do_fdt(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
                 unsigned long addr;
                 struct fdt_header *blob;
 
+				printf("Applying an overlay\n");
+
                 if (argc != 3)
                         return CMD_RET_USAGE;
 
@@ -655,7 +657,7 @@ static int do_fdt(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
                 if (!fdt_valid(&blob))
                         return CMD_RET_FAILURE;
 
-                if (fdt_overlay_apply(working_fdt, blob))
+                if (fdt_overlay_apply_verbose(working_fdt, blob))
                         return CMD_RET_FAILURE;
         }
 #endif
