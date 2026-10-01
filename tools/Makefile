@@ -164,7 +164,10 @@ HOSTCFLAGS_sha256.o := -pedantic
 quiet_cmd_wrap = WRAP    $@
 cmd_wrap = echo "\#include <../$(patsubst $(obj)/%,%,$@)>" >$@
 
-$(obj)/lib/%.c $(obj)/common/%.c:
+$(obj)/lib/%.c:
+	$(call cmd,wrap)
+
+$(obj)/common/%.c:
 	$(call cmd,wrap)
 
 clean-dirs := lib common

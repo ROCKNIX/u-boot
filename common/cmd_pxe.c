@@ -682,7 +682,9 @@ static void label_boot_fdtoverlay(cmd_tbl_t *cmdtp, struct pxe_label *label)
 			printf("Failed to apply overlay %s, skipping\n",
 			       overlayfile);
 			goto skip_overlay;
-		}
+		} else {
+			printf("Overlay %s applied successfully\n", overlayfile);
+ 		}
 
 skip_overlay:
 		if (end)
