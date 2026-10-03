@@ -27,6 +27,13 @@
 
 #define RK817_SYS_CFG(i)	(0xf1 + (i))
 
+#define RK817_INT_STS_REG0	0xf8
+#define RK817_INT_STS_MSK_REG0	0xf9
+/* power key is active low: press = falling edge, release = rising edge */
+#define RK817_PWRON_FALL	0x01
+#define RK817_PWRON_RISE	0x02
+#define RK817_PWRON_IRQS	(RK817_PWRON_FALL | RK817_PWRON_RISE)
+
 #define KEY_MENU_LEFT	GPIOEE(GPIOX_17)
 #define KEY_MENU_RIGHT	GPIOEE(GPIOX_16)
 
